@@ -1,0 +1,44 @@
+import axios from 'axios';
+
+const baseURL = 'http://localhost:5000/api/V0';
+
+
+//
+export const APICall = async (payload,token, endpoint,method) => {
+  try {
+    const response = await axios({
+      method: method,
+      url: `${baseURL}${endpoint}`,
+      data:payload,
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    
+    if (response.status === 200 || response.status === 201) {
+      return { success: true, data: response.data };
+    } else {
+      
+      return { success: false, message: response.statusText };
+    }
+  } catch (error) {
+    
+    if (error.response) {
+      return {
+        success: false,
+        status: error.response.status,
+        message: error.response.data.message || 'An error occurred',
+      };
+    } else if (error.request) {
+      return {
+        success: false,
+        message: 'No response from server',
+      };
+    } else {
+      return {
+        success: false,
+        message: 'Request error',
+      };
+    }
+  }
+};
